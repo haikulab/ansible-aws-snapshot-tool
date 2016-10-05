@@ -1,0 +1,50 @@
+---
+
+- name: Install pip package
+  apt: name=python-pip state=present
+  register: pip_installed
+
+- name: Install required python packages
+  when: pip_installed | success
+  pip: name="{{ item.package }}" version="{{ item.version }}"
+  with_items: "{{ required_packages }}"
+  register: required_packages_installed
+
+- name: Make sure /opt/aws-snapshot-tool exists
+  file: path=/opt/aws-snapshot-tool state=directory mode=0600
+  register: makesnapshots_folder_exists
+
+- name: Setup backup scripts
+  when: (makesnapshots_folder_exists | success) and (required_packages_installed | success)
+  template: >
+    src={{ item.src }}
+    dest={{ item.dest }}
+    owner=root
+    group=root
+    mode=0700
+  with_items:
+    - { src: config.j2 , dest: /opt/aws-snapshot-tool/config.py }
+    - { src: makesnapshots.py.j2 , dest: /opt/aws-snapshot-tool/makesnapshots.py }
+
+- name: Setting cron to run daily
+  cron: |
+    name="Daily EBS EC2 Volume snapshot"
+    job="/opt/aws-snapshot-tool/makesnapshots.py day"
+    user=root state=present
+    minute=30 hour=1 weekday="1-5"
+
+- name: Setting cron to run weekly
+  cron: |
+    name="Weekly EBS EC2 Volume snapshot"
+    job="/opt/aws-snapshot-tool/makesnapshots.py week"
+    user=root state=present
+    minute=30 hour=2 weekday=6
+
+- name: Setting cron to run monthly
+  cron: |
+    name="Monthly EBS EC2 Volume snapshot"
+    job="/opt/aws-snapshot-tool/makesnapshots.py month"
+    user=root state=present
+    minute=30 hour=3 day=1 weekday=*
+
+#- debug: msg="{{ auto_update }}"
