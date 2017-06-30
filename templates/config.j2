@@ -1,29 +1,29 @@
 config = {
 
     # AWS credentials for the IAM user (alternatively can be set up as environment variables)
-    'aws_access_key': '{{ aws.access_key }}',
-    'aws_secret_key': '{{ aws.secret_key }}',
+    'aws_access_key': '{{ ast__aws.access_key }}',
+    'aws_secret_key': '{{ ast__aws.secret_key }}',
 
     # EC2 info about your server's region
-    'ec2_region_name': '{{ ec2_region_name }}',
-    'ec2_region_endpoint': '{{ ec2_region_endpoint }}',
+    'ec2_region_name': '{{ ast__ec2_region_name }}',
+    'ec2_region_endpoint': '{{ ast__ec2_region_endpoint }}',
 
     # Tag of the EBS volume you want to take the snapshots of
-    'tag_name': 'MakeSnapshot',
-    'tag_value': 'True',
+    'tag_name': '{{ ast__tag_name }}',
+    'tag_value': '{{ ast__tag_value }}',
 
     # Number of snapshots to keep (the older ones are going to be deleted,
     # since they cost money).
-    'keep_day': 5,
-    'keep_week': 5,
-    'keep_month': 11,
+    'keep_day': {{ ast__keep_day }},
+    'keep_week': {{ ast__keep_week }},
+    'keep_month': {{ ast__keep_month }},
 
     # Path to the log for this script
-    'log_file': '{{ log_file }}',
+    'log_file': '{{ ast__log_file }}',
 
     # ARN of the SNS topic (optional)
-    {% if notification_topic_arn is defined  %}
-    'arn': '{{ notification_topic_arn }}',
+    {% if ast__notification_topic_arn is defined  %}
+    'arn': '{{ ast__notification_topic_arn }}',
     {% endif %}
 
     # Proxy config (optional)
