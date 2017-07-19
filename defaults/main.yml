@@ -5,7 +5,7 @@ required_packages:
   - { package: boto, version: "2.42.0" }
 
 # Tool installation path
-ast_path: /opt/aws-snapshot-tool
+ast_path: /etc/aws-snapshot-tool
 
 # AWS credentials for the IAM user (alternatively can be set up as environment variables)
 ast__aws:
