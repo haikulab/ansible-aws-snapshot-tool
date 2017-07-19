@@ -34,7 +34,7 @@ ast__log_file: /tmp/aws-make-snapshots.log
 
 # SNS Notification header
 ## I recommend you update it to something more unique.
-ast_header_message: "Finished AWS snapshotting"
+ast__header_message: "Finished AWS snapshotting"
 
 # Crontab configuration
 
