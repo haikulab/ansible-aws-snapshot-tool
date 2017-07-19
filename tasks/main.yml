@@ -10,8 +10,8 @@
   with_items: "{{ required_packages }}"
   register: required_packages_installed
 
-- name: Make sure /opt/aws-snapshot-tool exists
-  file: path=/opt/aws-snapshot-tool state=directory mode=0600
+- name: Make sure {{ ast_path }} exists
+  file: path={{ ast_path }} state=directory mode=0600
   register: makesnapshots_folder_exists
 
 - name: Setup backup scripts
@@ -23,28 +23,21 @@
     group=root
     mode=0700
   with_items:
-    - { src: config.j2 , dest: /opt/aws-snapshot-tool/config.py }
-    - { src: makesnapshots.py.j2 , dest: /opt/aws-snapshot-tool/makesnapshots.py }
+    - { src: config.j2 , dest: "{{ ast_path }}/config.py" }
+    - { src: makesnapshots.py.j2 , dest: "{{ ast_path }}/makesnapshots.py" }
 
-- name: Setting cron to run daily
+- name: Setting cron to run daily into /etc/cron.d
   cron: |
     name="Daily EBS EC2 Volume snapshot"
-    job="/opt/aws-snapshot-tool/makesnapshots.py day"
+    job="{{ ast_path }}/makesnapshots.py day"
+    cron_file="aws-snapshot-daily"
     user=root state=present
     minute=30 hour=1 weekday="1-5"
 
-- name: Setting cron to run weekly
-  cron: |
-    name="Weekly EBS EC2 Volume snapshot"
-    job="/opt/aws-snapshot-tool/makesnapshots.py week"
-    user=root state=present
-    minute=30 hour=2 weekday=6
+# # Weekly EBS EC2 Volume snapshot
+# 30 2 * * 6 {{ ast__user }} {{ ast_path }}/makesnapshots.py week
 
-- name: Setting cron to run monthly
-  cron: |
-    name="Monthly EBS EC2 Volume snapshot"
-    job="/opt/aws-snapshot-tool/makesnapshots.py month"
-    user=root state=present
-    minute=30 hour=3 day=1 weekday=*
+# # Monthly EBS EC2 Volume snapshot
+# 30 3 1 * * {{ ast__user }} {{ ast_path }}/makesnapshots.py month
 
 #- debug: msg="{{ auto_update }}"

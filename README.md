@@ -16,3 +16,7 @@ Create permissions policy to allow use to action backups. Use the `iam.policy.sa
 ### Create a user for the policy
 
 Create a user and assign to it the policy from previous step.
+
+### SNS permissions
+
+If you are planning to use SNS for notificaitons, don't forget to add permissions to the user.
