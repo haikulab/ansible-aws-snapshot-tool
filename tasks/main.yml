@@ -26,7 +26,7 @@
     - { src: config.j2 , dest: "{{ ast_path }}/config.py" }
     - { src: makesnapshots.py.j2 , dest: "{{ ast_path }}/makesnapshots.py" }
 
-- name: Setting cron to run daily into /etc/cron.d
+- name: Setting /etc/cron.d config to run daily
   cron: |
     name="Daily EBS EC2 Volume snapshot"
     job="{{ ast_path }}/makesnapshots.py day"
@@ -34,10 +34,20 @@
     user=root state=present
     minute=30 hour=1 weekday="1-5"
 
-# # Weekly EBS EC2 Volume snapshot
-# 30 2 * * 6 {{ ast__user }} {{ ast_path }}/makesnapshots.py week
+- name: Setting /etc/cron.d config to run weekly
+  cron: |
+    name="Weekly EBS EC2 Volume snapshot"
+    job="{{ ast_path }}/makesnapshots.py week"
+    cron_file="aws-snapshot-weekly"
+    user=root state=present
+    minute=30 hour=2 weekday="6"
 
-# # Monthly EBS EC2 Volume snapshot
-# 30 3 1 * * {{ ast__user }} {{ ast_path }}/makesnapshots.py month
+- name: Setting /etc/cron.d config to run monthly
+  cron: |
+    name="Monthly EBS EC2 Volume snapshot"
+    job="{{ ast_path }}/makesnapshots.py monthly"
+    cron_file="aws-snapshot-monthly"
+    user=root state=present
+    minute=20 hour=3 weekday="1"
 
 #- debug: msg="{{ auto_update }}"
