@@ -13,6 +13,11 @@ ast__aws:
 ast__ec2_region_name: CHANGEME
 ast__ec2_region_endpoint: CHANGEME
 
+# Project Name
+## Allows for an easier way to identify
+## which backup the message belongs to
+ast__project_name: CHANGEME
+
 # Tag of the EBS volume you want to take the snapshots of
 ast__tag_name: MakeSnapshot
 ast__tag_value: True
