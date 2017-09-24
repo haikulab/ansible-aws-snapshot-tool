@@ -4,6 +4,9 @@
 required_packages:
   - { package: boto, version: "2.42.0" }
 
+# Tool installation path
+ast_path: /etc/aws-snapshot-tool
+
 # AWS credentials for the IAM user (alternatively can be set up as environment variables)
 ast__aws:
   access_key: CHANGEME
@@ -12,11 +15,6 @@ ast__aws:
 # EC2 info about your servers region
 ast__ec2_region_name: CHANGEME
 ast__ec2_region_endpoint: CHANGEME
-
-# Project Name
-## Allows for an easier way to identify
-## which backup the message belongs to
-ast__project_name: CHANGEME
 
 # Tag of the EBS volume you want to take the snapshots of
 ast__tag_name: MakeSnapshot
@@ -33,3 +31,10 @@ ast__notification_topic_arn:
 
 # Path to the log for this script
 ast__log_file: /tmp/aws-make-snapshots.log
+
+# SNS Notification header
+## I recommend you update it to something more unique.
+ast__header_message: "Finished AWS snapshotting"
+
+## Default user for the cronjob
+ast__user: root

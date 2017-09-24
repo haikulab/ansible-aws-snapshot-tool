@@ -231,7 +231,7 @@ print result
 # SNS reporting
 if sns_arn:
     if errmsg:
-        sns.publish(sns_arn, 'Error in processing volumes for: ' + errmsg, '{{ ast__project_name }}: Error with AWS Snapshot')
-    sns.publish(sns_arn, message, '{{ ast__project_name }}: Finished AWS snapshotting')
+        sns.publish(sns_arn, 'Error in processing volumes: ' + errmsg, 'Error with AWS Snapshot')
+    sns.publish(sns_arn, message, '{{ ast__header_message }}')
 
 logging.info(result)
