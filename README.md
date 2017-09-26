@@ -36,3 +36,17 @@ Traceback (most recent call last):
 boto.exception.BotoServerError: BotoServerError: 403 Forbidden
 {"Error":{"Code":"AuthorizationError","Message":"User: arn:aws:iam::104767170405:user/aws-snapshot-tool is not authorized to perform: SNS:Publish on resource: arn:aws:sns:ap-southeast-2:104767170405:aws_automatic_snapshots","Type":"Sender"},"RequestId":"0de5fb3b-5ef2-575c-b009-a97a219bc70f"}
 ```
+
+### Post Cron Tasks
+
+It's always a good idea to keep track of important cron tasks being executed. What's more important than backups? This is a trick question.
+
+For this we have some variables that are can be overwritten to perform tasks after the cron task runs and is successful.
+
+**NOTE**: Make sure to add **&&** in front of the command.
+
+```yaml
+ast__daily_post_cron_action: "&& curl -s https://hchk.io/some_id"
+ast__weekly_post_cron_action: "&& curl -s https://hchk.io/some_id"
+ast__monthly_post_cron_action: "&& curl -s https://hchk.io/some_id"
+```

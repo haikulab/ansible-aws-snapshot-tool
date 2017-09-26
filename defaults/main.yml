@@ -5,7 +5,7 @@ required_packages:
   - { package: boto, version: "2.42.0" }
 
 # Tool installation path
-ast_path: /etc/aws-snapshot-tool
+ast__path: /etc/aws-snapshot-tool
 
 # AWS credentials for the IAM user (alternatively can be set up as environment variables)
 ast__aws:
@@ -38,3 +38,16 @@ ast__header_message: "Finished AWS snapshotting"
 
 ## Default user for the cronjob
 ast__user: root
+
+# Post Cron Actions
+######################################################################
+## Use these to add commands to be added AFTER the main cron task
+## These will run only on success of the main command.
+## ALWAYS prepend your command with && (only run if previous command is exit 0)
+
+## eg. ast__monthly_post_cron_action: "&& curl -s https://some.service.com/id"
+## will return: && curl -s https://some.service.com/id
+
+ast__daily_post_cron_action: ""
+ast__weekly_post_cron_action: ""
+ast__monthly_post_cron_action: ""
