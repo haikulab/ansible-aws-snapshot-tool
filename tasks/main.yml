@@ -10,8 +10,8 @@
   with_items: "{{ required_packages }}"
   register: required_packages_installed
 
-- name: Make sure /opt/aws-snapshot-tool exists
-  file: path=/opt/aws-snapshot-tool state=directory mode=0600
+- name: Make sure {{ ast__path }} exists
+  file: path={{ ast__path }} state=directory mode=0600
   register: makesnapshots_folder_exists
 
 - name: Setup backup scripts
@@ -23,28 +23,31 @@
     group=root
     mode=0700
   with_items:
-    - { src: config.j2 , dest: /opt/aws-snapshot-tool/config.py }
-    - { src: makesnapshots.py.j2 , dest: /opt/aws-snapshot-tool/makesnapshots.py }
+    - { src: config.j2 , dest: "{{ ast__path }}/config.py" }
+    - { src: makesnapshots.py.j2 , dest: "{{ ast__path }}/makesnapshots.py" }
 
-- name: Setting cron to run daily
+- name: Setting /etc/cron.d config to run daily
   cron: |
     name="Daily EBS EC2 Volume snapshot"
-    job="/opt/aws-snapshot-tool/makesnapshots.py day"
+    job="{{ ast__path }}/makesnapshots.py day > /dev/null 2>&1 {{ ast__daily_post_cron_action }}"
+    cron_file="aws-snapshot-daily"
     user=root state=present
     minute=30 hour=1 weekday="1-5"
 
-- name: Setting cron to run weekly
+- name: Setting /etc/cron.d config to run weekly
   cron: |
     name="Weekly EBS EC2 Volume snapshot"
-    job="/opt/aws-snapshot-tool/makesnapshots.py week"
+    job="{{ ast__path }}/makesnapshots.py week > /dev/null 2>&1 {{ ast__weekly_post_cron_action }}"
+    cron_file="aws-snapshot-weekly"
     user=root state=present
-    minute=30 hour=2 weekday=6
+    minute=30 hour=2 weekday="6"
 
-- name: Setting cron to run monthly
+- name: Setting /etc/cron.d config to run monthly
   cron: |
     name="Monthly EBS EC2 Volume snapshot"
-    job="/opt/aws-snapshot-tool/makesnapshots.py month"
+    job="{{ ast__path }}/makesnapshots.py monthly > /dev/null 2>&1 {{ ast__monthly_post_cron_action }}"
+    cron_file="aws-snapshot-monthly"
     user=root state=present
-    minute=30 hour=3 day=1 weekday=*
+    minute=20 hour=3 weekday="1"
 
 #- debug: msg="{{ auto_update }}"
