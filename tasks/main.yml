@@ -5,7 +5,7 @@
   register: pip_installed
 
 - name: Install required python packages
-  when: pip_installed | success
+  when: pip_installed is success
   pip: name="{{ item.package }}" version="{{ item.version }}"
   with_items: "{{ required_packages }}"
   register: required_packages_installed
@@ -15,7 +15,7 @@
   register: makesnapshots_folder_exists
 
 - name: Setup backup scripts
-  when: (makesnapshots_folder_exists | success) and (required_packages_installed | success)
+  when: (makesnapshots_folder_exists is success) and (required_packages_installed is success)
   template: >
     src={{ item.src }}
     dest={{ item.dest }}
